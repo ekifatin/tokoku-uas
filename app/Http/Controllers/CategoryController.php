@@ -3,14 +3,14 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Product;
+use App\Models\Category;
 
-class ProductController extends Controller
+class CategoryController extends Controller
 {
     // show data
     public function index()
     {
-        $data = Product::all();
+        $data = Category::all();
 
         // return $data;
         return response()->json([
@@ -22,7 +22,7 @@ class ProductController extends Controller
    // add data
     public function store(Request $request)
     {
-        $store = Product::create($request->all());
+        $store = Category::create($request->all());
         
         return response()->json([
             "message" => "Create data success",
@@ -30,24 +30,16 @@ class ProductController extends Controller
         ], 200);
     }
 
-    // show by category
-    public function show($category)
+    //
+    public function show($id)
     {
-        $show = Product::where('category', 'like', '%' . $category . '%')->get();
-        if($show){
-            return response()->json([
-                "message" => "Show data Success",
-                "data" => $show 
-            ]);
-        }else{
-            return ["message" => "Data not found"];
-        }
+        //
     }
 
-    // update product
+    // Update Catrgory
     public function update(Request $request, $id)
     {
-        $update = Product::where("id_product", $id)->update($request->all());
+        $update = Category::where("id_categories", $id)->update($request->all());
         
         // return $update;
          return response()->json([
@@ -56,10 +48,10 @@ class ProductController extends Controller
         ], 200);
     }
 
-    // Category
+    // Delete Category
     public function destroy($id)
     {
-        $data = Product::where("id_product", $id);
+        $data = Category::where("id_categories", $id);
         if($data){
             $data->delete();
             return["message" => "Delete Success"];
