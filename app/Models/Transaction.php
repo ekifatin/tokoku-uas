@@ -8,4 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 class Transaction extends Model
 {
     use HasFactory;
+    protected $with = [
+        'product',
+    ];
+    public function product()
+    {
+        return $this->belongsTo(Product::class, 'id_product');
+    }
 }

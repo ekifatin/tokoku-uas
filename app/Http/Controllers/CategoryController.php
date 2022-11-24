@@ -39,7 +39,7 @@ class CategoryController extends Controller
     // Update Catrgory
     public function update(Request $request, $id)
     {
-        $update = Category::where("id_categories", $id)->update($request->all());
+        $update = Category::where("id_category", $id)->update($request->all());
         
         // return $update;
          return response()->json([
@@ -51,7 +51,7 @@ class CategoryController extends Controller
     // Delete Category
     public function destroy($id)
     {
-        $data = Category::where("id_categories", $id);
+        $data = Category::where("id_category", $id);
         if($data){
             $data->delete();
             return["message" => "Delete Success"];
