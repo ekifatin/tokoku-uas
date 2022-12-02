@@ -22,25 +22,13 @@ class ProductController extends Controller
    // add data
     public function store(Request $request)
     {
-        $store = new Product();
-        $store->product_name = $request->product_name;
-        $store->id_category = $request->id_category;
-        $store->category = $request->category;
-        $store->description = $request->description;
-        $store->price = $request->price;
-        $store->stock = $request->stock;
-        $store->picture = $request->picture;
-        $store->save();
+        $store = Product::create($request->all());
 
-        if($store){
-            return response()->json([
-                "message" => "Create data success",
-                "data" => $store
-            ], 200);
-        }else {
-            return ["message" => "Column Cannot be Null!"];
-        }
-       
+        //return $store;
+        return response()->json([
+            "message" => "Create data success",
+            "data" => $store
+        ], 200);
     }
 
     // show by category
@@ -69,7 +57,7 @@ class ProductController extends Controller
         ], 200);
     }
 
-    // Category
+    // delete product
     public function destroy($id)
     {
         $data = Product::where("id_product", $id);
