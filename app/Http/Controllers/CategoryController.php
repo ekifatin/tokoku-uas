@@ -2,44 +2,45 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Category;
+use Illuminate\Http\Request;
 
 class CategoryController extends Controller
 {
     // show data
     public function index()
     {
-        $data = Category::all();
+        $show = Category::all();
 
         // return $data;
         return response()->json([
             "message" => "Load data success",
-            "data" => $data
+            "data" => $show
         ], 200);
     }
 
-   // add data
+    // add data
     public function store(Request $request)
     {
         $store = Category::create($request->all());
         
+        // return $store;
         return response()->json([
             "message" => "Create data success",
             "data" => $store
         ], 200);
     }
 
-    //
+    // Show by category
     public function show($id)
     {
         //
     }
 
-    // Update Catrgory
+    // Update data
     public function update(Request $request, $id)
     {
-        $update = Category::where("id_category", $id)->update($request->all());
+        $update = Category::where("id", $id)->update($request->all());
         
         // return $update;
          return response()->json([
@@ -51,12 +52,6 @@ class CategoryController extends Controller
     // Delete Category
     public function destroy($id)
     {
-        $data = Category::where("id_category", $id);
-        if($data){
-            $data->delete();
-            return["message" => "Delete Success"];
-        }else{
-            return["message" => "Data not found"];
-        }
+        //
     }
 }

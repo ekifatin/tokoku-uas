@@ -4,60 +4,46 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Transaction;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Validator;
+use App\Models\Product;
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 
 class TransactionController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    // show data
     public function index()
     {
-        //
+        $data = Transaction::where('id', auth()->user()->id)->get();
+        return response([
+            'status' => 200,
+            'data' => $data
+        ], 200);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
+    // Add Data
     public function store(Request $request)
     {
-        $store = new Transaction();
-        $store->id_product = $request->id_product;
-        $store->id_user = $request->id_user;
-        $store->kuantitas = $request->kuantitas;
-        $store->pembayaran = $request->pembayaran;
-        $store->total_harga = $request->total_harga;
-        $store->save();
-        
-        $total_harga = DB::table('products')->select('harga')->where('id', $validate['id_product'])->first();
-        $total_harga =  (int)$total_harga->harga * $validate['jumlah'];
+        $product_id = $request->product_id;
+        $user_id = auth()->user()->id;
+        $price = Product::where('id', $product_id)->value('price');
+        $quantity = $request->quantity;
+        $total_price = $price * $quantity;
 
-        $validate += ['total_harga' => $total_harga];
-        
-        if($store){
-            return response()->json([
-                "message" => "Create data success",
-                "data" => $store
-            ], 200);
-        }else {
-            return ["message" => "Column Cannot be Null!"];
-        }
+        $store = new Transaction();
+        $store->product_id = $product_id;
+        $store->product_name = Product::where('id', $product_id)->value('product_name');
+        $store->user_id = $user_id;
+        $store->user_name = User::where('id', $user_id)->value('name');
+        $store->address = $request->address;
+        $store->quantity = $quantity;
+        $store->total_price = $total_price;
+        $store->payment = $request->payment;
+        $store->save();
+
+        return response()->json([
+            "message" => "Create transaction success",
+            "data" => $store
+        ], 200);
     }
 
     /**

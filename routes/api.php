@@ -31,6 +31,8 @@ Route::get('/category', [CategoryController::class, 'index']);
 
 Route::middleware('auth:sanctum')->group(function(){
     //transaction
+    Route::get('/transaction', [TransactionController::class, 'index']);
+    Route::post('/transaction', [TransactionController::class, 'store']);
 
     Route::post('/logout', [AuthController::class, 'logout']);
 
@@ -44,5 +46,6 @@ Route::middleware('auth:sanctum')->group(function(){
         //category
         Route::post('/category', [CategoryController::class, 'store']);
         Route::put('/category/{id}', [CategoryController::class, 'update']);
+
     });
 });

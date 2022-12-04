@@ -2,39 +2,57 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Product;
+use App\Models\Category;
+use Illuminate\Http\Request;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
     // show data
     public function index()
     {
-        $data = Product::all();
+        $show = Product::all();
 
         // return $data;
         return response()->json([
             "message" => "Load data success",
-            "data" => $data
+            "data" => $show
         ], 200);
     }
 
-   // add data
+    // add data
     public function store(Request $request)
     {
-        $store = Product::create($request->all());
+        $category_id = $request->category_id;
+        $picture = Str::random(32).".".$request->picture->getClientOriginalExtension();
 
-        //return $store;
+        $store = new Product();
+        $store->product_name =  $request->product_name;
+        $store->category_id = $request->category_id;
+        $store->category = Category::where('id', $category_id)->value('category_name');
+        $store->description = $request->description;
+        $store->price = $request->price;
+        $store->stock = $request->stock;
+        $store->picture = $picture;
+        $store->save();
+        
+        // save image on public
+        Storage::disk('public')->put($picture, file_get_contents($request->picture));
+
+        // return $store;
         return response()->json([
             "message" => "Create data success",
             "data" => $store
         ], 200);
     }
+       
 
-    // show by category
-    public function show($category)
+    // Show by category
+    public function show($id)
     {
-        $show = Product::where('category', 'like', '%' . $category . '%')->get();
+        $show = Product::where('category', 'like', '%' . $id . '%')->get();
         if($show){
             return response()->json([
                 "message" => "Show data Success",
@@ -45,10 +63,10 @@ class ProductController extends Controller
         }
     }
 
-    // update product
+    // Update data
     public function update(Request $request, $id)
     {
-        $update = Product::where("id_product", $id)->update($request->all());
+        $update = Product::where("id", $id)->update($request->all());
         
         // return $update;
          return response()->json([
@@ -57,12 +75,12 @@ class ProductController extends Controller
         ], 200);
     }
 
-    // delete product
+    // Delete data
     public function destroy($id)
     {
-        $data = Product::where("id_product", $id);
-        if($data){
-            $data->delete();
+        $destroy = Product::find($id);
+        if($destroy){
+            $destroy->delete();
             return["message" => "Delete Success"];
         }else{
             return["message" => "Data not found"];
